@@ -9,6 +9,7 @@ from wordcloud import WordCloud
 @st.cache_data
 def load_data():
     possible_paths = [
+        "/mnt/data/cord_cleaned_sample.csv",
         "data/cord_cleaned_sample.csv",
         "../data/cord_cleaned_sample.csv",
     ]
