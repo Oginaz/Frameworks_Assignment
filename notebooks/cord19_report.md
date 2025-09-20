@@ -37,7 +37,7 @@ The goal of this project was to **explore the CORD-19 dataset (`metadata.csv`)**
 
 ## 6. Challenges
 - **Large dataset**: Initial CSV was too big to handle; needed sampling and caching.  
-- **Missing data**: Some rows lacked publication dates or abstracts.  
+- **Missing data**: Some rows lacked publication dates and abstracts.  
 - **Date parsing**: Inconsistent formats required careful parsing with `errors="coerce"`.  
 
 ## 7. Learning Outcomes
