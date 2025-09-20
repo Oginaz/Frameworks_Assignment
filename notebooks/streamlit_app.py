@@ -8,32 +8,51 @@ from wordcloud import WordCloud
 # -- load data 
 @st.cache_data
 def load_data():
-    # -- Path to your sample file (update if needed)
-    possible_paths = [
-        "data/cord_cleaned_sample.csv",  
-        "../data/cord_cleaned_sample.csv",     
-    ]  
+    # --- Build paths relative to this script ---
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
+    possible_paths = [
+        os.path.join(script_dir, "data", "cord_cleaned_sample.csv"),
+        os.path.join(script_dir, "..", "data", "cord_cleaned_sample.csv"),
+        "cord_cleaned_sample.csv",  # fallback: same folder as script
+    ]
+
+    # --- Try each path until one works ---
+    df = None
     for path in possible_paths:
         if os.path.exists(path):
-            df = pd.read_csv(path)
+            st.write(f"✅ Found dataset at: {path}")
+            df = pd.read_csv(path, encoding="utf-8-sig")
             break
-    else:
-        raise FileNotFoundError(
-            "Could not find cord_cleaned_sample.csv. "
-            "Make sure the dataset is in 'data/' (or provide a sample)."
+
+    if df is None:
+        st.error(
+            "❌ Could not find `cord_cleaned_sample.csv`.\n\n"
+            "Checked these locations:\n" + "\n".join(possible_paths)
         )
+        return pd.DataFrame()  # return empty DataFrame instead of crashing
 
-    # -- Convert publish_time column to datetime
-    df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
+    # --- Clean column names (strip + lowercase for safety) ---
+    df.columns = df.columns.str.strip().str.lower()
 
-    # -- Extract year from publish_time
-    df['year'] = df['publish_time'].dt.year
+    # --- publish_time column ---
+    if "publish_time" in df.columns:
+        df["publish_time"] = pd.to_datetime(df["publish_time"], errors="coerce")
+        df["year"] = df["publish_time"].dt.year
+    else:
+        st.warning("⚠️ No 'publish_time' column found — skipping year extraction.")
+        df["year"] = None
 
-    # -- Abstract length (characters)
-    df['abstract_word_count'] = df['abstract'].astype(str).apply(len)
+    # --- abstract column ---
+    if "abstract" in df.columns:
+        df["abstract_word_count"] = df["abstract"].astype(str).apply(len)
+    else:
+        st.warning("⚠️ No 'abstract' column found — skipping abstract word counts.")
+        df["abstract_word_count"] = 0
 
+    st.write("📊 Loaded columns:", df.columns.tolist())  # debug helper
     return df
+
 
 # -- load the dataset once
 df = load_data()
