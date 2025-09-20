@@ -8,7 +8,7 @@ from wordcloud import WordCloud
 # -- load data 
 @st.cache_data
 def load_data():
-    drive_file_id = "1IVaeKlESg94nNZyLrEHNYEg5V-EBR_Gl"
+    drive_file_id = "1Ytsa7wjhIRvFNn2LTTT0J5Qmf5p467Ku"
     drive_url = f"https://drive.google.com/uc?id={drive_file_id}"
 
     local_paths = [
