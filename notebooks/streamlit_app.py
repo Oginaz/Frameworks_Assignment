@@ -12,8 +12,8 @@ def load_data():
     drive_url = f"https://drive.google.com/uc?id={drive_file_id}"
 
     local_paths = [
-        "data/cord_cleaned.csv",      # if running from repo root
-        "../data/cord_cleaned.csv",   # if running from notebooks/
+        "data/cord_cleaned_sample.csv",      # if running from repo root
+        "../data/cord_cleaned_sample.csv",   # if running from notebooks/
     ]
 
     if os.environ.get("STREAMLIT_RUNTIME") == "true":
