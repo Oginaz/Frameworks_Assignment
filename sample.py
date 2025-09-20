@@ -7,7 +7,7 @@ INPUT_FILE = "data/cord_cleaned.csv"
 OUTPUT_FILE = "data/cord_cleaned_sample.csv"
 
 # Number of rows to keep
-N_ROWS = 35000
+N_ROWS = 40000
 
 def make_sample():
     print(f"Reading first {N_ROWS} rows from {INPUT_FILE} ...")
