@@ -8,11 +8,11 @@ from wordcloud import WordCloud
 # -- load data 
 @st.cache_data
 def load_data():
+    # -- Path to your sample file (update if needed)
     possible_paths = [
-        "/mnt/data/cord_cleaned_sample.csv",
-        "data/cord_cleaned_sample.csv",
-        "../data/cord_cleaned_sample.csv",
-    ]
+        "data/cord_cleaned_sample.csv",  
+        "../data/cord_cleaned_sample.csv",     
+    ]  
 
     for path in possible_paths:
         if os.path.exists(path):
@@ -21,25 +21,19 @@ def load_data():
     else:
         raise FileNotFoundError(
             "Could not find cord_cleaned_sample.csv. "
-            "Make sure the dataset is in 'data/' or '../data/'"
+            "Make sure the dataset is in 'data/' (or provide a sample)."
         )
 
-    # Ensure publish_time column exists
-    if 'publish_time' in df.columns:
-        df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
-        df['year'] = df['publish_time'].dt.year
-    else:
-        st.warning("⚠️ Column 'publish_time' not found in dataset.")
-        df['year'] = None
+    # -- Convert publish_time column to datetime
+    df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
 
-    # Abstract length
-    if 'abstract' in df.columns:
-        df['abstract_word_count'] = df['abstract'].astype(str).apply(len)
-    else:
-        df['abstract_word_count'] = 0
+    # -- Extract year from publish_time
+    df['year'] = df['publish_time'].dt.year
+
+    # -- Abstract length (characters)
+    df['abstract_word_count'] = df['abstract'].astype(str).apply(len)
 
     return df
-
 
 # -- load the dataset once
 df = load_data()
