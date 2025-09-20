@@ -12,21 +12,30 @@ def load_data():
     Load the CORD-19 cleaned dataset.
     Tries multiple possible paths so it works both locally and on Streamlit Cloud.
     """
-    possible_paths = [
-        "data/cord_cleaned.csv",          # expected path on Streamlit Cloud
-        "data/cord_cleaned_sample.csv",   # fallback sample dataset
-        "../data/cord_cleaned.csv",       # original local path
-    ]
+    # Google Drive link (converted to direct download)
+    drive_file_id = "1IVaeKlESg94nNZyLrEHNYEg5V-EBR_Gl"
+    drive_url = f"https://drive.google.com/uc?id={drive_file_id}"
 
-    for path in possible_paths:
-        if os.path.exists(path):
-            df = pd.read_csv(path)
-            break
+    local_path = "../data/cord_cleaned.csv"
+
+    # Decide source based on environment
+    if os.environ.get("STREAMLIT_RUNTIME") == "true":
+        # Running in Streamlit Cloud
+        try:
+            df = pd.read_csv(drive_url)
+        except Exception as e:
+            st.error(f"Failed to load dataset from Google Drive. Error: {e}")
+            if os.path.exists(local_path):
+                df = pd.read_csv(local_path)
+            else:
+                st.stop()
     else:
-        raise FileNotFoundError(
-            "Could not find cord_cleaned.csv. "
-            "Make sure the dataset is in 'data/' (or provide a sample)."
-        )
+        # Local development fallback
+        if os.path.exists(local_path):
+            df = pd.read_csv(local_path)
+        else:
+            st.error(f"Local file not found: {local_path}")
+            st.stop()
 
     # -- Convert publish_time column to datetime
     df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
