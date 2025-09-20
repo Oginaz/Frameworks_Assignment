@@ -8,26 +8,21 @@ from wordcloud import WordCloud
 # -- load data 
 @st.cache_data
 def load_data():
-    drive_file_id = "1Ytsa7wjhIRvFNn2LTTT0J5Qmf5p467Ku"
-    drive_url = f"https://drive.google.com/uc?id={drive_file_id}"
+    # -- Path to your sample file (update if needed)
+    possible_paths = [
+        "data/cord_cleaned_sample.csv",  
+        "../data/cord_cleaned_sample.csv",     
+    ]  
 
-    local_paths = [
-        "data/cord_cleaned_sample.csv",      # if running from repo root
-        "../data/cord_cleaned_sample.csv",   # if running from notebooks/
-    ]
-
-    if os.environ.get("STREAMLIT_RUNTIME") == "true":
-        # Running on Streamlit Cloud → use Google Drive
-        df = pd.read_csv(drive_url)
+    for path in possible_paths:
+        if os.path.exists(path):
+            df = pd.read_csv(path)
+            break
     else:
-        # Running locally → check both possible paths
-        for path in local_paths:
-            if os.path.exists(path):
-                df = pd.read_csv(path)
-                break
-        else:
-            st.error("Local file not found in data/ or ../data/.")
-            st.stop()
+        raise FileNotFoundError(
+            "Could not find cord_cleaned.csv. "
+            "Make sure the dataset is in 'data/' (or provide a sample)."
+        )
 
     # -- Convert publish_time column to datetime
     df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
