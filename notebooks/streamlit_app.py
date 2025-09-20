@@ -16,7 +16,7 @@ def load_data():
     drive_file_id = "1IVaeKlESg94nNZyLrEHNYEg5V-EBR_Gl"
     drive_url = f"https://drive.google.com/uc?id={drive_file_id}"
 
-    local_path = "../data/cord_cleaned.csv"
+    local_path = "data/cord_cleaned.csv"
 
     # Decide source based on environment
     if os.environ.get("STREAMLIT_RUNTIME") == "true":
