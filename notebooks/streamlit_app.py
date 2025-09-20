@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,17 +8,35 @@ from wordcloud import WordCloud
 # -- load data 
 @st.cache_data
 def load_data():
-    # --load the cord_cleaned.csv dataset
-    df = pd.read_csv('../data/cord_cleaned.csv')
+    """
+    Load the CORD-19 cleaned dataset.
+    Tries multiple possible paths so it works both locally and on Streamlit Cloud.
+    """
+    possible_paths = [
+        "data/cord_cleaned.csv",          # expected path on Streamlit Cloud
+        "data/cord_cleaned_sample.csv",   # fallback sample dataset
+        "../data/cord_cleaned.csv",       # original local path
+    ]
 
-    # -- convert publish_time column to datetime
+    for path in possible_paths:
+        if os.path.exists(path):
+            df = pd.read_csv(path)
+            break
+    else:
+        raise FileNotFoundError(
+            "Could not find cord_cleaned.csv. "
+            "Make sure the dataset is in 'data/' (or provide a sample)."
+        )
+
+    # -- Convert publish_time column to datetime
     df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
 
-    # -- extract year from publish_time
+    # -- Extract year from publish_time
     df['year'] = df['publish_time'].dt.year
 
-    # -- add a column for abstract length (number of characters, not tokens)
+    # -- Abstract length (characters)
     df['abstract_word_count'] = df['abstract'].astype(str).apply(len)
+
     return df
 
 # -- load the dataset once
