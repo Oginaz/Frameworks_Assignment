@@ -1,6 +1,6 @@
 import pandas as pd
 
-# Path to your large file (update if needed)
+# path to cord_cleaned.csv file
 INPUT_FILE = "data/cord_cleaned.csv"
 
 # Path to save the sample file
